@@ -18,17 +18,6 @@ before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
-  - mysql -e 'CREATE SCHEMA pipelines;'
-  - echo "# App information" >> .env
-  - echo APP_SECRET = I4mY0urP455Phr4s3 >> .env
-  - echo APP_INFO_ROUTE = /app/info >> .env
-  - echo "# DB AUTH" >> .env
-  - echo DB_DRIVER=stackerjs-db-mysql-adapter >> .env
-  - echo DB_HOST=127.0.0.1 >> .env
-  - echo DB_USER=root >> .env
-  - echo DB_PASS= >> .env
-  - echo DB_NAME=pipelines >> .env
-  - echo SLACK_HOOK=$SLACK_HOOK_URL >> .env
   - npm run build
 
 script:
