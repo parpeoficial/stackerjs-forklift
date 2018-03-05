@@ -1,0 +1,23 @@
+import { Http, MVC } from 'stackerjs';
+
+
+export class _CONTROLLER_NAME_ extends MVC.Controller
+{
+
+    public routes():MVC.IControllerRoute
+    {
+        return {
+            'get': {
+                '/': 'indexAction'
+            }
+        }
+    }
+
+    indexAction(request):Http.Response
+    {
+        return new Http.Response()
+            .setStatusCode(200)
+            .setContent("Welcome to _CONTROLLER_NAME_");
+    }
+
+}

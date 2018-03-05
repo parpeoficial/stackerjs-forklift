@@ -1,0 +1,21 @@
+import { MVC } from 'stackerjs';
+
+
+export class _CONTROLLER_NAME_ extends MVC.Controller
+{
+
+    routes()
+    {
+        return {
+            'get': {
+                '/': 'indexAction'
+            }
+        }
+    }
+
+    indexAction(request)
+    {
+        return "Welcome to _CONTROLLER_NAME_";
+    }
+
+}

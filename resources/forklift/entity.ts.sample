@@ -1,0 +1,16 @@
+import { ORM } from 'stackerjs';
+
+
+export class _ENTITY_NAME_ implements ORM.IEntity
+{
+
+    metadata():ORM.IEntityMetadata
+    {
+        return {
+            'table': '_ENTITY_TABLE_NAME_',
+            'fields': _ENTITY_FIELDS_,
+            'relations': _ENTITY_RELATIONS_
+        }
+    }
+
+}
