@@ -1,7 +1,7 @@
-const { unlinkSync, existsSync } = require('fs');
-const { exec } = require('child_process');
-const { expect } = require('chai');
-const { CLI } = require("./../../bin/forklift");
+import { unlinkSync, existsSync } from 'fs';
+import { exec } from 'child_process';
+import { expect } from 'chai';
+import { CLI } from "./../../bin/forklift";
 
 
 describe.only('ForkliftTest', () => 

@@ -1,5 +1,9 @@
 import * as fs from 'fs';
-import { ALLOWED_TYPES, SNAKECASEFY } from './Utils';
+import { 
+    ALLOWED_TYPES, 
+    REGEX_TYPE,
+    SNAKECASEFY
+} from './Utils';
 
 
 export const mvcControllerCreate = scope =>
@@ -10,8 +14,7 @@ export const mvcControllerCreate = scope =>
     if (options['-v'])
         scope.message(`Creating ${params.controller_name}...`);
 
-    const REGEX_TYPE = /\.(js|ts)/, 
-        TYPE = options['--type'] ?
+    const TYPE = options['--type'] ?
             options['--type'] : 
             REGEX_TYPE.test(params.controller_name) ? 
                 REGEX_TYPE.exec(params.controller_name)[1] : 'js';
@@ -40,8 +43,7 @@ export const mvcEntityCreate = scope =>
     if (options['-v'])
         scope.message(`Creating ${params.entity_name}...`);
 
-    const REGEX_TYPE = /\.(js|ts)/, 
-        TYPE = options['--type'] ?
+    const TYPE = options['--type'] ?
             options['--type'] : 
             REGEX_TYPE.test(params.entity_name) ? 
                 REGEX_TYPE.exec(params.entity_name)[1] : 'js';
