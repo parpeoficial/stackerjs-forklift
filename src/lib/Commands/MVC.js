@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import { 
     ALLOWED_TYPES, 
     REGEX_TYPE,
-    SNAKECASEFY
+    SNAKECASEFY,
+    GETSAMPLE
 } from './Utils';
 
 
@@ -24,7 +25,7 @@ export const mvcControllerCreate = scope =>
     
     if (!scope.hasErrors()) {
         const CONTROLLER_NAME = params.controller_name.replace(REGEX_TYPE, ''),
-            CONTROLLER_SAMPLE = fs.readFileSync(`${__dirname}/../../resources/forklift/controller.${TYPE}.sample`, { 'encoding': 'utf8' });
+            CONTROLLER_SAMPLE = GETSAMPLE(`mvc/controller.${TYPE}.sample`);
 
         fs.writeFileSync(`${process.cwd()}/${CONTROLLER_NAME}.${TYPE}`, CONTROLLER_SAMPLE.replace(/\_CONTROLLER\_NAME\_/g, CONTROLLER_NAME));
         if (options['-v'])
@@ -53,7 +54,7 @@ export const mvcEntityCreate = scope =>
     
     if (!scope.hasErrors()) {
         const ENTITY_NAME = params.entity_name.replace(REGEX_TYPE, ''),
-            ENTITY_SAMPLE = fs.readFileSync(`${__dirname}/../../resources/forklift/entity.${TYPE}.sample`, { 'encoding': 'utf8' });
+            ENTITY_SAMPLE = GETSAMPLE(`mvc/entity.${TYPE}.sample`);
 
         fs.writeFileSync(
             `${process.cwd()}/${ENTITY_NAME}.${TYPE}`, 
