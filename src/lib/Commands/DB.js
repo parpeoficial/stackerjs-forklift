@@ -56,16 +56,28 @@ export const dbMigrateList = scope => DB.Factory.getQueryBuilder()
 export const dbMigrateUp = scope => DB.Factory.getQueryBuilder()
     .select().set('*').from('migrations').where('migrated_at is null').execute()
     .then(results => {
-        let queryBuilder = DB.Factory.getQueryBuilder(),
+        let options = scope.getRoute().getOptions(),
+            queryBuilder = DB.Factory.getQueryBuilder(),
             migratedAt = new Date();
 
         return Promise.all(results.map(async migration => {
             let script = loadMigration(migration.name);
-            await script.up();
-            await queryBuilder.update().into('migrations')
-                .set('migrated_at', migratedAt)
-                .where({ 'id': migration.id })
-                .execute();
+
+            if (options['-v'])
+                scope.message(`Migrating ${migration.name}...`);
+
+            try {
+                await script.up();
+                await queryBuilder.update().into('migrations')
+                    .set('migrated_at', migratedAt)
+                    .where({ 'id': migration.id })
+                    .execute();
+            } catch (err) {
+                throw new Error(`Error migrating ${migration.name}`);
+            }
+
+            if (options['-v'])
+                scope.message(`Migrated ${migration.name}...`);
         }))
         .catch(err => scope.error(err.message))
         .then(() => scope);

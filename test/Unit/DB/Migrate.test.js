@@ -30,7 +30,8 @@ describe('Unit/DB/MigrateTest', function ()
                 .exec(['db:migrate:list'])
                 .then(scope => scope.retrieve())
                 .then(response => {
-                    console.log(response.slice(9));
+                    expect(response.slice(9))
+                        .to.contain('Migrated at: waiting...');
                 })
                 .then(() => done());
         });
@@ -41,11 +42,11 @@ describe('Unit/DB/MigrateTest', function ()
         it('Should make a migration up', done => 
         {
             CLI.retrieveMessages()
-                .exec(['db:migrate:up'])
+                .exec(['db:migrate:up', '-v'])
                 .then(scope => scope.retrieve())
-                .then(response => {
-                    console.log(response);
-                })
+                .then(response => 
+                    response.slice(9).forEach(message => 
+                        expect(message).to.match(/^Migrat/)))
                 .then(() => done());
         });
     });
