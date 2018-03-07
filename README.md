@@ -11,3 +11,53 @@
 
 # Forklift
 Command line manager for [StackerJS](https://github.com/parpeoficial/stackerjs) applications.
+
+## Installation
+```bash
+npm install -g stackerjs-forklift
+```
+
+## Commands
+
+### MVC
+
+#### Controllers
+Creating a controller
+```bash
+forklift mvc:controller:create ExampleController.js
+```
+
+Creating typescript controller
+```bash
+forklift mvc:controller:create ExampleController.ts
+```
+
+#### Entities
+Creating an Entity
+```bash
+forklift mvc:entity:create ExampleEntity.js
+```
+
+Creating a Typescript Entity
+```bash
+forklift mvc:entity:create ExampleEntity.ts
+```
+
+### DB
+
+#### Migrations
+Creating a migration file
+```bash
+forklift mvc:migrate:create createTableRequirements
+# Creates a file at /path/to/project/storage/database/migrations
+```
+
+Executing migrations
+```bash
+forklift mvc:migrate:up
+```
+
+Executing rollbacks/downgrades
+```bash
+forklift mvc:migrate:down
+```
