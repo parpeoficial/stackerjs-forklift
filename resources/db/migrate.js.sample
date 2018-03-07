@@ -1,0 +1,12 @@
+
+
+export const up = () =>
+{
+    // Here goes upgrade
+}
+
+
+export const down = () =>
+{
+    // Here goes downgrade
+}

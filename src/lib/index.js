@@ -40,8 +40,13 @@ export class AppCLI
 
         for(let i = 0; i < this.commands.length; i++) {
             let match = this.commands[i].route.match(params);
-            if (match instanceof AppCLIRoute)
-                return this.commands[i].command(new AppCLIScope(match.setOptions(options), this.retrieveMessage));
+            if (match instanceof AppCLIRoute) {
+                let response = this.commands[i].command(new AppCLIScope(match.setOptions(options), this.retrieveMessage));           
+                if (!(response instanceof Promise))
+                    response = Promise.resolve(response);
+
+                return response;
+            }
         }
         
         return null;

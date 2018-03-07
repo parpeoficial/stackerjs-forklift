@@ -1,5 +1,10 @@
 import * as fs from 'fs';
-import { ALLOWED_TYPES, SNAKECASEFY } from './Utils';
+import { 
+    ALLOWED_TYPES, 
+    REGEX_TYPE,
+    SNAKECASEFY,
+    GETSAMPLE
+} from './Utils';
 
 
 export const mvcControllerCreate = scope =>
@@ -10,8 +15,7 @@ export const mvcControllerCreate = scope =>
     if (options['-v'])
         scope.message(`Creating ${params.controller_name}...`);
 
-    const REGEX_TYPE = /\.(js|ts)/, 
-        TYPE = options['--type'] ?
+    const TYPE = options['--type'] ?
             options['--type'] : 
             REGEX_TYPE.test(params.controller_name) ? 
                 REGEX_TYPE.exec(params.controller_name)[1] : 'js';
@@ -21,7 +25,7 @@ export const mvcControllerCreate = scope =>
     
     if (!scope.hasErrors()) {
         const CONTROLLER_NAME = params.controller_name.replace(REGEX_TYPE, ''),
-            CONTROLLER_SAMPLE = fs.readFileSync(`${__dirname}/../../resources/forklift/controller.${TYPE}.sample`, { 'encoding': 'utf8' });
+            CONTROLLER_SAMPLE = GETSAMPLE(`mvc/controller.${TYPE}.sample`);
 
         fs.writeFileSync(`${process.cwd()}/${CONTROLLER_NAME}.${TYPE}`, CONTROLLER_SAMPLE.replace(/\_CONTROLLER\_NAME\_/g, CONTROLLER_NAME));
         if (options['-v'])
@@ -40,8 +44,7 @@ export const mvcEntityCreate = scope =>
     if (options['-v'])
         scope.message(`Creating ${params.entity_name}...`);
 
-    const REGEX_TYPE = /\.(js|ts)/, 
-        TYPE = options['--type'] ?
+    const TYPE = options['--type'] ?
             options['--type'] : 
             REGEX_TYPE.test(params.entity_name) ? 
                 REGEX_TYPE.exec(params.entity_name)[1] : 'js';
@@ -51,7 +54,7 @@ export const mvcEntityCreate = scope =>
     
     if (!scope.hasErrors()) {
         const ENTITY_NAME = params.entity_name.replace(REGEX_TYPE, ''),
-            ENTITY_SAMPLE = fs.readFileSync(`${__dirname}/../../resources/forklift/entity.${TYPE}.sample`, { 'encoding': 'utf8' });
+            ENTITY_SAMPLE = GETSAMPLE(`mvc/entity.${TYPE}.sample`);
 
         fs.writeFileSync(
             `${process.cwd()}/${ENTITY_NAME}.${TYPE}`, 
