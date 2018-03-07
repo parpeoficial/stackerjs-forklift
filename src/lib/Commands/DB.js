@@ -64,7 +64,7 @@ export const dbMigrateUp = scope => DB.Factory.getQueryBuilder()
             let script = loadMigration(migration.name);
 
             if (options['-v'])
-                scope.message(`Migrating ${migration.name}...`);
+                scope.message(`Upgrading ${migration.name}...`);
 
             try {
                 await script.up();
@@ -77,17 +77,49 @@ export const dbMigrateUp = scope => DB.Factory.getQueryBuilder()
             }
 
             if (options['-v'])
-                scope.message(`Migrated ${migration.name}...`);
+                scope.message(`Upgraded ${migration.name}...`);
         }))
         .catch(err => scope.error(err.message))
         .then(() => scope);
     });
 
 
-export const dbMigrateDown = scope =>
+export const dbMigrateDown = scope => 
 {
+    let queryBuilder = DB.Factory.getQueryBuilder()
 
-    return scope;
+    return queryBuilder.select().set('*').from('migrations').where({
+        'migrated_at': queryBuilder.select().set('migrated_at')
+            .from('migrations')
+            .order(['name', 'DESC'])
+            .limit(1)
+    }).order('name').execute()
+    .then(results => {
+        let options = scope.getRoute().getOptions();
+        
+        return Promise.all(results.map(async migration => {
+            let script = loadMigration(migration.name);
+
+            if (options['-v'])
+                scope.message(`Downgrading ${migration.name}...`);
+
+            try {
+                await script.down();
+                await queryBuilder.update().into('migrations')
+                    .set('migrated_at', null)
+                    .where({ 'id': migration.id })
+                    .execute();
+            } catch (err) {
+                console.log(err.message);
+                throw new Error(`${migration.name}`, err.message);
+            }
+
+            if (options['-v'])
+                scope.message(`Downgraded ${migration.name}...`);
+        }))
+        .catch(err => scope.error(err.message))
+        .then(() => scope);
+    });
 }
 
 

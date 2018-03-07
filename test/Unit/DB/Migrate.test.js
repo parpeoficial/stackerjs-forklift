@@ -17,7 +17,8 @@ describe('Unit/DB/MigrateTest', function ()
                 .exec(['db:migrate:create', 'createTableUsers', '-v'])
                 .then(scope => scope.retrieve())
                 .then(response => 
-                    expect(readdirSync(`${process.cwd()}/storage/database/migrations`)).to.be.lengthOf(1))
+                    expect(readdirSync(`${process.cwd()}/storage/database/migrations`).length)
+                        .to.be.at.least(1))
                 .then(() => done());
         });
     });
@@ -39,14 +40,28 @@ describe('Unit/DB/MigrateTest', function ()
 
     describe("DB:Migrate:Up", () => 
     {
-        it('Should make a migration up', done => 
+        it('Should make a migration up, famous UPGRADE', done => 
         {
             CLI.retrieveMessages()
                 .exec(['db:migrate:up', '-v'])
                 .then(scope => scope.retrieve())
                 .then(response => 
                     response.slice(9).forEach(message => 
-                        expect(message).to.match(/^Migrat/)))
+                        expect(message).to.match(/^Upgrad/)))
+                .then(() => done());
+        });
+    });
+
+    describe("DB:Migrate:Down", () => 
+    {
+        it('Should make a migration down, famous DOWNGRADE', done => 
+        {
+            CLI.retrieveMessages()
+                .exec(['db:migrate:down', '-v'])
+                .then(scope => scope.retrieve())
+                .then(response => 
+                    response.slice(9).forEach(message => 
+                        expect(message).to.match(/^Downgrad/)))
                 .then(() => done());
         });
     });
