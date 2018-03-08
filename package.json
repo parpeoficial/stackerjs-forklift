@@ -10,7 +10,9 @@
         "type": "git",
         "url": "https://github.com/parpeoficial/stackerjs-forklift"
     },
-    "main": "lib/index.js",
+    "bin": {
+        "forklift": "bin/forklift.js"
+    },
 
     "dependencies": {
         "stackerjs-db": "^1.0.1",
