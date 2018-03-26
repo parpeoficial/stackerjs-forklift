@@ -1,10 +1,9 @@
 import { rmdirSync, unlinkSync, readdirSync } from "fs";
-import { exec } from "child_process";
 import { expect } from "chai";
 import { DB } from "stackerjs-db";
 import { CLI } from "./../../../bin/forklift";
 
-describe("Unit/DB/MigrateTest", function() 
+describe.only("Unit/DB/MigrateTest", function() 
 {
     this.timeout(4000);
     describe("DB:Migrate:Create", () => 
@@ -14,7 +13,7 @@ describe("Unit/DB/MigrateTest", function()
             CLI.retrieveMessages()
                 .exec(["db:migrate:create", "createTableUsers", "-v"])
                 .then(scope => scope.retrieve())
-                .then(response =>
+                .then(() =>
                     expect(readdirSync(`${process.cwd()}/storage/database/migrations`).length).to.be.at.least(1))
                 .then(() => done());
         });

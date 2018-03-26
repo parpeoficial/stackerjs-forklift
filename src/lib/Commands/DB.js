@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, writeFileSync, readdirSync } from "fs";
 import { DB } from "stackerjs-db";
 import { SNAKECASEFY, GETSAMPLE } from "./Utils";
 
@@ -56,20 +56,37 @@ export const dbMigrateList = scope =>
             return scope;
         });
 
-export const dbMigrateUp = scope =>
-    DB.Factory.getQueryBuilder()
-        .select()
-        .set("*")
-        .from("migrations")
-        .where("migrated_at is null")
-        .execute()
-        .then(results => 
-        {
-            let options = scope.getRoute().getOptions(),
-                queryBuilder = DB.Factory.getQueryBuilder(),
-                migratedAt = new Date();
+export const dbMigrateUp = scope => 
+{
+    let queryBuilder = DB.Factory.getQueryBuilder(),
+        options = scope.getRoute().getOptions(),
+        migratedAt = new Date().getTime().toString();
 
-            return Promise.all(results.map(async migration => 
+    return Promise.all(readdirSync(MIGRATIONSFOLDER).map(migration => 
+    {
+        migration = migration.slice(0, -3);
+        return queryBuilder
+            .select()
+            .set("*")
+            .from("migrations")
+            .where({ name: migration })
+            .limit(1)
+            .execute()
+            .then(([result]) => 
+            {
+                if (result) return result;
+
+                result = { name: migration };
+                return queryBuilder
+                    .insert()
+                    .into("migrations")
+                    .set(result)
+                    .execute()
+                    .then(() => result);
+            });
+    }))
+        .then(migrations =>
+            migrations.map(async migration => 
             {
                 let script = loadMigration(migration.name);
 
@@ -85,18 +102,19 @@ export const dbMigrateUp = scope =>
                         .set("migrated_at", migratedAt)
                         .where({ id: migration.id })
                         .execute();
+
+                    if (options["-v"])
+                        scope.message(`Upgraded ${migration.name}...`);
                 }
                 catch (err) 
                 {
-                    throw new Error(`Error migrating ${migration.name}`);
-                }
+                    if (options["-v"]) scope.error(err);
 
-                if (options["-v"])
-                    scope.message(`Upgraded ${migration.name}...`);
+                    scope.error(`Error migrating ${migration.name}`);
+                }
             }))
-                .catch(err => scope.error(err.message))
-                .then(() => scope);
-        });
+        .then(() => scope);
+};
 
 export const dbMigrateDown = scope => 
 {
@@ -139,7 +157,6 @@ export const dbMigrateDown = scope =>
                 }
                 catch (err) 
                 {
-                    console.log(err.message);
                     throw new Error(`${migration.name}`, err.message);
                 }
 
