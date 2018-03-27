@@ -20,11 +20,7 @@ export const dbMigrateCreate = async scope =>
                 SNAKECASEFY(params.migration_name),
             CONTENT = GETSAMPLE("db/migrate.js.sample");
 
-        await DB.Factory.getQueryBuilder()
-            .insert()
-            .into("migrations")
-            .set("name", FILENAME)
-            .execute();
+        await persistMigrationOnDatabase({ name: FILENAME });
         writeFileSync(`${MIGRATIONSFOLDER}/${FILENAME}.js`, CONTENT);
 
         if (options["-v"]) scope.message(`Created migration ${FILENAME}`);
@@ -76,13 +72,7 @@ export const dbMigrateUp = scope =>
             {
                 if (result) return result;
 
-                result = { name: migration };
-                return queryBuilder
-                    .insert()
-                    .into("migrations")
-                    .set(result)
-                    .execute()
-                    .then(() => result);
+                return persistMigrationOnDatabase({ name: migration });
             });
     }))
         .then(migrations =>
@@ -167,6 +157,14 @@ export const dbMigrateDown = scope =>
                 .then(() => scope);
         });
 };
+
+const persistMigrationOnDatabase = migration =>
+    DB.Factory.getQueryBuilder()
+        .insert()
+        .into("migrations")
+        .set(migration)
+        .execute()
+        .then(() => migration);
 
 const createMigrationsFolderIfNotExists = scope => 
 {
