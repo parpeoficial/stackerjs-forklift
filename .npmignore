@@ -1,0 +1,13 @@
+# App files and folders
+/.babelrc
+/.env
+/.eslintrc.json
+/.nyc_output
+/.travis.yml
+/coverage
+/src
+/test
+
+# OS and IDE files and folders
+/.idea
+/.vscode

@@ -1,151 +1,153 @@
-
-
-export class AppCLI
+export class AppCLI 
 {
-
-    constructor()
+    constructor() 
     {
         this.commands = [];
         this.retrieveMessage = false;
     }
 
-    register(route, command)
+    register(route, command) 
     {
         this.commands.push({
-            'route': new AppCLIRoute(route), command
+            route: new AppCLIRoute(route),
+            command
         });
 
         return this;
     }
 
-    retrieveMessages()
+    retrieveMessages() 
     {
         this.retrieveMessage = true;
         return this;
     }
 
-    exec(args)
+    exec(args) 
     {
         let options = {},
-            params = args.map(p => {
-                if (p.substr(0, 1) === '-') {
-                    let [field, value] = p.split('=');
-                    options[field] = value ? value : true;                    
-                    return false;
-                }
+            params = args
+                .map(p => 
+                {
+                    if (p.substr(0, 1) === "-") 
+                    {
+                        let [field, value] = p.split("=");
+                        options[field] = value ? value : true;
+                        return false;
+                    }
 
-                return p;
-            })
-            .filter(p => !p ? false : true)
+                    return p;
+                })
+                .filter(p => (!p ? false : true));
 
-        for(let i = 0; i < this.commands.length; i++) {
+        for (let i = 0; i < this.commands.length; i++) 
+        {
             let match = this.commands[i].route.match(params);
-            if (match instanceof AppCLIRoute) {
-                let response = this.commands[i].command(new AppCLIScope(match.setOptions(options), this.retrieveMessage));           
+            if (match instanceof AppCLIRoute) 
+            {
+                let response = this.commands[i].command(new AppCLIScope(
+                    match.setOptions(options),
+                    this.retrieveMessage
+                ));
                 if (!(response instanceof Promise))
                     response = Promise.resolve(response);
 
                 return response;
             }
         }
-        
+
         return null;
     }
-
 }
 
-
-class AppCLIRoute
+class AppCLIRoute 
 {
-
-    constructor(route)
+    constructor(route) 
     {
-        this.route = Array.isArray(route) ? route : route.split(' ');
-        this.options = {}
+        this.route = Array.isArray(route) ? route : route.split(" ");
+        this.options = {};
     }
 
-    match(currentRoute)
+    match(currentRoute) 
     {
-        if (this.route.length !== currentRoute.length)
-            return null;
+        if (this.route.length !== currentRoute.length) return null;
 
         let routeObject = [];
-        for (let i = 0; i < currentRoute.length; i++) {
-            let regexVar = /\{[a-zA-Z\_\-]+\}/;
-            if (!regexVar.test(typeof this.route[i] === 'object' ? this.route[i].value : this.route[i]) && 
-                currentRoute[i] !== this.route[i])
+        for (let i = 0; i < currentRoute.length; i++) 
+        {
+            let regexVar = /\{[a-zA-Z_-]+\}/;
+            if (
+                !regexVar.test(typeof this.route[i] === "object"
+                    ? this.route[i].value
+                    : this.route[i]) &&
+                currentRoute[i] !== this.route[i]
+            )
                 return null;
 
-            routeObject.push(
-                regexVar.test(this.route[i]) ?
-                    { 'key': this.route[i].replace('{','').replace('}', ''), 'value': currentRoute[i] }
-                :
-                    currentRoute[i]
-            );
+            routeObject.push(regexVar.test(this.route[i])
+                ? {
+                    key: this.route[i].replace("{", "").replace("}", ""),
+                    value: currentRoute[i]
+                }
+                : currentRoute[i]);
         }
 
         return new AppCLIRoute(routeObject);
     }
 
-    getParams()
+    getParams() 
     {
         let params = {};
-        this.route.forEach(p => typeof p === 'object' ? params[p.key] = p.value : null);
+        this.route.forEach(p => (typeof p === "object" ? (params[p.key] = p.value) : null));
 
         return params;
     }
 
-    getOptions()
+    getOptions() 
     {
         return this.options;
     }
 
-    setOptions(options)
+    setOptions(options) 
     {
         this.options = options;
         return this;
     }
-
 }
 
-
-class AppCLIScope
+class AppCLIScope 
 {
-
-    constructor(route, retrieveMessage = false)
+    constructor(route, retrieveMessage = false) 
     {
         this.route = route;
         this.retrieveMessage = retrieveMessage;
         this.messages = [];
         this.errors = {};
 
-        this.message('SSSSSSS SSSSSSS SSSS    SS  SS SS      SS SSSSSSS SSSSSSSS');
-        this.message('SS      SSSSSSS SS SS   SS SS  SS      SS SS      SSSSSSSS');
-        this.message('SSSSSS  SS   SS SS  SS  SSS    SS         SSSSSS     SS   ');
-        this.message('SS      SS   SS SSSSS   SSS    SS      SS SS         SS   ');
-        this.message('SS      SSSSSSS SS  SS  SS SS  SS      SS SS         SS   ');
-        this.message('SS      SSSSSSS SS   SS SS  SS SSSSSSS SS SS         SS   ');
-        this.message('');
-        this.message('                  Powered by Parpe');
-        this.message('\n');
+        this.message("SSSSSSS SSSSSSS SSSS    SS  SS SS      SS SSSSSSS SSSSSSSS");
+        this.message("SS      SSSSSSS SS SS   SS SS  SS      SS SS      SSSSSSSS");
+        this.message("SSSSSS  SS   SS SS  SS  SSS    SS         SSSSSS     SS   ");
+        this.message("SS      SS   SS SSSSS   SSS    SS      SS SS         SS   ");
+        this.message("SS      SSSSSSS SS  SS  SS SS  SS      SS SS         SS   ");
+        this.message("SS      SSSSSSS SS   SS SS  SS SSSSSSS SS SS         SS   ");
+        this.message("");
+        this.message("                  Powered by Parpe");
+        this.message("\n");
     }
 
-    hasErrors()
+    hasErrors() 
     {
         return Object.keys(this.errors).length > 0;
     }
 
-    message(...message)
-    {   
+    message(...message) 
+    {
         this.messages.push(...message);
-        if (!this.retrieveMessage)
-            console.log(...message);
+        if (!this.retrieveMessage) console.log(...message);
     }
 
-    error(field, message)
+    error(field, message) 
     {
-        if (typeof this.errors[field] === 'undefined')
-            this.errors[field] = [];
+        if (typeof this.errors[field] === "undefined") this.errors[field] = [];
 
         this.errors[field].push(message);
 
@@ -153,14 +155,13 @@ class AppCLIScope
         this.message(`Message: ${message}`);
     }
 
-    getRoute()
+    getRoute() 
     {
         return this.route;
     }
 
-    retrieve()
+    retrieve() 
     {
         return this.hasErrors() ? this.errors : this.messages;
     }
-
 }

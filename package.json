@@ -1,6 +1,6 @@
 {
     "name": "stackerjs-forklift",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "author": {
         "name": "Vinicius Guedes",
         "email": "viniciusgued@gmail.com",
@@ -10,7 +10,9 @@
         "type": "git",
         "url": "https://github.com/parpeoficial/stackerjs-forklift"
     },
-    "main": "lib/index.js",
+    "bin": {
+        "forklift": "bin/forklift.js"
+    },
 
     "dependencies": {
         "stackerjs-db": "^1.0.1",
@@ -31,17 +33,9 @@
     },
 
     "nyc": {
-        "exclude": [
-            "lib"
-        ],
-        "require": [
-            "babel-register",
-            "babel-polyfill"
-        ],
-        "reporter": [
-            "lcov",
-            "text"
-        ]
+        "exclude": ["lib"],
+        "require": ["babel-register", "babel-polyfill"],
+        "reporter": ["lcov", "text"]
     },
     "scripts": {
         "build": "./node_modules/.bin/babel src -d ./",
