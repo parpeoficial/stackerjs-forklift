@@ -7,7 +7,7 @@ import {
     dbMigrateCreate,
     dbMigrateList,
     dbMigrateUp,
-    dbMigrateDown,
+    dbMigrateDown
 } from "../lib/Commands/DB";
 
 const PARAMS = process.argv

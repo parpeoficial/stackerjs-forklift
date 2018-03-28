@@ -10,7 +10,7 @@ export class AppCLI
     {
         this.commands.push({
             route: new AppCLIRoute(route),
-            command,
+            command
         });
 
         return this;
@@ -86,7 +86,7 @@ class AppCLIRoute
             routeObject.push(regexVar.test(this.route[i])
                 ? {
                     key: this.route[i].replace("{", "").replace("}", ""),
-                    value: currentRoute[i],
+                    value: currentRoute[i]
                 }
                 : currentRoute[i]);
         }
